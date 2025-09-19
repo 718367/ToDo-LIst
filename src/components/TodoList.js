@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 import Container from "@mui/material/Container";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -97,9 +98,10 @@ export default function TodoList() {
       localStorage.setItem("todos", JSON.stringify(updatedTodos));
     }
   }
+  // eslint-disable-next-line array-callback-return
   const todosJSX = todos.map((t) => {
     if (todosFilter == 2) {
-      if (t.isCompleted == 0) {
+      if (t.isCompleted === 0) {
         return (
           <Todo
             key={t.id}
@@ -109,8 +111,8 @@ export default function TodoList() {
           />
         );
       }
-    } else if (todosFilter == 1) {
-      if (t.isCompleted == 1) {
+    } else if (todosFilter === 1) {
+      if (t.isCompleted === 1) {
         return (
           <Todo
             key={t.id}
@@ -222,7 +224,7 @@ export default function TodoList() {
                 onClick={() => {
                   handelAddEvent();
                 }}
-                disabled={todoTitle == ""}
+                disabled={todoTitle === ""}
               >
                 إضافة
               </Button>
