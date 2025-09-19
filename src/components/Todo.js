@@ -32,7 +32,7 @@ export default function Todo({ todo }) {
         className="todo-card"
         sx={{
           minWidth: 275,
-          backgroundColor: todo.isCompleted ? "#747899ff" : "#283593",
+          backgroundColor: todo.isCompleted ? "#414a96ff" : "#283593",
           opacity: todo.isCompleted ? 0.8 : 1,
           color: "white",
           marginTop: 4,

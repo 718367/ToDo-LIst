@@ -100,28 +100,24 @@ export default function TodoList() {
   }
   // eslint-disable-next-line array-callback-return
   const todosJSX = todos.map((t) => {
-    if (todosFilter == 2) {
-      if (t.isCompleted === 0) {
-        return (
-          <Todo
-            key={t.id}
-            todo={t}
-            handelCheck={handelCompleteClick}
-            handelDelete={handelDeleteClick}
-          />
-        );
-      }
+    if (todosFilter === 2) {
+      return !t.isCompleted ? (
+        <Todo
+          key={t.id}
+          todo={t}
+          handelCheck={handelCompleteClick}
+          handelDelete={handelDeleteClick}
+        />
+      ) : null;
     } else if (todosFilter === 1) {
-      if (t.isCompleted === 1) {
-        return (
-          <Todo
-            key={t.id}
-            todo={t}
-            handelCheck={handelCompleteClick}
-            handelDelete={handelDeleteClick}
-          />
-        );
-      }
+      return t.isCompleted ? (
+        <Todo
+          key={t.id}
+          todo={t}
+          handelCheck={handelCompleteClick}
+          handelDelete={handelDeleteClick}
+        />
+      ) : null;
     } else {
       return (
         <Todo
