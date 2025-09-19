@@ -15,30 +15,30 @@ import { HandlerContext } from "../contexts/HandlerContext";
 
 import { v4 as uuidv4 } from "uuid";
 
-const initialTodos = [
-  {
-    id: `${uuidv4()}`,
-    title: "المهمة الاولى ",
-    details: "التفاصيل الخاصة بالمهمة الاولى ",
-    isCompleted: false,
-  },
-  {
-    id: `${uuidv4()}`,
-    title: "المهمة الثانية ",
-    details: "التفاصيل الخاصة بالمهمة الثانية ",
-    isCompleted: false,
-  },
-  {
-    id: `${uuidv4()}`,
-    title: "المهمة الثالثة ",
-    details: "التفاصيل الخاصة بالمهمة الثالثة ",
-    isCompleted: false,
-  },
-];
+// const initialTodos = [
+//   {
+//     id: `${uuidv4()}`,
+//     title: "المهمة الاولى ",
+//     details: "التفاصيل الخاصة بالمهمة الاولى ",
+//     isCompleted: false,
+//   },
+//   {
+//     id: `${uuidv4()}`,
+//     title: "المهمة الثانية ",
+//     details: "التفاصيل الخاصة بالمهمة الثانية ",
+//     isCompleted: false,
+//   },
+//   {
+//     id: `${uuidv4()}`,
+//     title: "المهمة الثالثة ",
+//     details: "التفاصيل الخاصة بالمهمة الثالثة ",
+//     isCompleted: false,
+//   },
+// ];
 
 export default function TodoList() {
   const [todosFilter, setTodosFilter] = useState(0);
-  const [todos, setTodos] = useState(initialTodos);
+  const [todos, setTodos] = useState([]);
   const [todoTitle, setTodoTitle] = useState("");
 
   useEffect(() => {
