@@ -44,7 +44,11 @@ export default function TodoList() {
   useEffect(() => {
     console.log("Hello World from TodoList useEffect !! ");
     const localStorageTodos = JSON.parse(localStorage.getItem("todos"));
-    setTodos(localStorageTodos);
+    if (localStorageTodos) {
+      setTodos(localStorageTodos);
+    } else {
+      console.log("no todos in the local storage");
+    }
   }, []);
 
   function handelAddEvent() {
