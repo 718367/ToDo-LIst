@@ -1,38 +1,46 @@
 .App {
   text-align: center;
+  font-family: "cairo";
+}
+.icon-button {
+  transition: all 0.5s !important;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.icon-button:hover {
+  opacity: 0.9;
+  scale: 1.1;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.521);
+}
+.todo-card {
+  transition: all 0.5s !important;
+}
+.todo-card:hover {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  box-shadow: 0px 7px 7px rgba(0, 0, 0, 0.521);
+}
+.add-btn {
+  transition: all 0.7s !important;
+}
+.add-btn:hover {
+  opacity: 0.9;
+  scale: 1.1;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+@font-face {
+  font-family: "Cairo";
+  src: url("../public/fonts/Cairo-Light.ttf") format("truetype");
+  font-weight: 300; /* Light */
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+@font-face {
+  font-family: "Cairo";
+  src: url("../public/fonts/Cairo-Regular.ttf") format("truetype");
+  font-weight: 400; /* Regular */
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+@font-face {
+  font-family: "Cairo";
+  src: url("../public/fonts/Cairo-Bold.ttf") format("truetype");
+  font-weight: 700; /* Bold */
 }

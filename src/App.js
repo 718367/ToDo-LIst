@@ -1,24 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
-
+import "./App.css";
+import TodoList from "./components/TodoList";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 function App() {
+  const theme = createTheme({
+    typography: {
+      fontFamily: ["Cairo"],
+    },
+    palette: {
+      primary: {
+        main: "#6b100aff",
+      },
+      secondary: {
+        main: "#f44336",
+      },
+    },
+  });
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <div
+        className="App"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+          backgroundColor: "#ecececff",
+          direction: "rtl",
+        }}
+      >
+        <TodoList />
+      </div>
+    </ThemeProvider>
   );
 }
 
