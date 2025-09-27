@@ -5,7 +5,6 @@ import Grid from "@mui/material/Grid";
 import CheckIcon from "@mui/icons-material/Check";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
-import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import { useContext } from "react";
 import { HandlerContext } from "../contexts/HandlerContext";
