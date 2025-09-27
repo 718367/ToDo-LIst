@@ -1,4 +1,12 @@
 /* eslint-disable eqeqeq */
+
+// React
+import { useState, useEffect, useMemo, useReducer } from "react";
+
+// External Libraries
+//import { v4 as uuidv4 } from "uuid";
+
+// MUI Components
 import Container from "@mui/material/Container";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -9,12 +17,18 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { useState, useEffect } from "react";
+
+// Internal Components
+import DeleteModal from "./DeleteModal";
+import UpdateModal from "./UpdateModal";
 import Todo from "./Todo";
+import MySnackBar from "./MySnackBar";
+
+// Context
 import { HandlerContext } from "../contexts/HandlerContext";
 
-import { v4 as uuidv4 } from "uuid";
-
+// Fuctions
+import addReducer from "../Reducers/AddReducer";
 // const initialTodos = [
 //   {
 //     id: `${uuidv4()}`,
@@ -37,203 +51,208 @@ import { v4 as uuidv4 } from "uuid";
 // ];
 
 export default function TodoList() {
-  const [todosFilter, setTodosFilter] = useState(0);
-  const [todos, setTodos] = useState([]);
+  //Reducers
+  const [todos, dispach] = useReducer(addReducer, []);
+  // Todos
   const [todoTitle, setTodoTitle] = useState("");
+  const [todoId, setTodoId] = useState();
+  const [todo, setTodo] = useState();
+  const [todosFilter, setTodosFilter] = useState(0);
+
+  // Modals
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [updateModal, setUpdateModal] = useState(false);
+
+  // Snackbar
+  const [openSnackBar, setOpenSnackBar] = useState(false);
+  const [snckBarMessage, setSnckBarMessage] = useState("");
+
+  function Delete(id) {
+    setTodoId(id);
+    setDeleteModal(true);
+  }
+  function Update(todo) {
+    setTodo(todo);
+    setUpdateModal(true);
+  }
 
   useEffect(() => {
+    dispach({ type: "reload" });
     console.log("Hello World from TodoList useEffect !! ");
-    const localStorageTodos = JSON.parse(localStorage.getItem("todos"));
-    if (localStorageTodos) {
-      console.log("local storage todos catched");
-      setTodos(localStorageTodos);
-    } else {
-      console.log("no todos in the local storage");
-    }
   }, []);
-
-  function handelAddEvent() {
-    if (todoTitle !== "") {
-      const newTodo = {
-        id: `${uuidv4()}`,
-        title: todoTitle,
-        details: "",
-        isCompleted: false,
-      };
-      const updatedTodos = [...todos, newTodo];
-      localStorage.setItem("todos", JSON.stringify(updatedTodos));
-      setTodos(updatedTodos);
-      setTodoTitle("");
-    }
-  }
 
   function handelInputChange(value) {
     setTodoTitle(value);
   }
 
   function handelCompleteClick(todoId) {
-    const updatedTodos = todos.map((t) => {
-      if (t.id === todoId) {
-        t.isCompleted = !t.isCompleted;
-      }
-      return t;
-    });
-    setTodos(updatedTodos);
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
+    dispach({ type: "complete", payload: { id: todoId } });
   }
 
+  function handelAddEvent() {
+    if (todoTitle !== "") {
+      dispach({ type: "add", payload: { newTitle: todoTitle } });
+      setTodoTitle("");
+    }
+  }
   function handelDeleteClick(todoId) {
-    const updatedTodos = todos.filter((t) => t.id !== todoId);
-    setTodos(updatedTodos);
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
+    dispach({ type: "delete", payload: { id: todoId } });
+    setSnckBarMessage("TODO has been Deleted successfuly !");
+    setOpenSnackBar(true);
   }
   function handelUpdateClick(todoId, newTitle, newDetails) {
     if (newTitle !== "" && newDetails !== "") {
-      const updatedTodos = todos.map((t) => {
-        if (t.id === todoId) {
-          return {
-            ...t,
-            title: newTitle,
-            details: newDetails,
-          };
-        }
-        return t;
+      dispach({
+        type: "update",
+        payload: { id: todoId, newTitle: newTitle, newDetails: newDetails },
       });
-      setTodos(updatedTodos);
-      localStorage.setItem("todos", JSON.stringify(updatedTodos));
+      setSnckBarMessage("TODO has been Updated successfuly !");
+      setOpenSnackBar(true);
     }
   }
-  // eslint-disable-next-line array-callback-return
-  const todosJSX = todos.map((t) => {
-    if (todosFilter === 2) {
-      return !t.isCompleted ? (
-        <Todo
-          key={t.id}
-          todo={t}
-          handelCheck={handelCompleteClick}
-          handelDelete={handelDeleteClick}
-        />
-      ) : null;
-    } else if (todosFilter === 1) {
-      return t.isCompleted ? (
-        <Todo
-          key={t.id}
-          todo={t}
-          handelCheck={handelCompleteClick}
-          handelDelete={handelDeleteClick}
-        />
-      ) : null;
-    } else {
-      return (
-        <Todo
-          key={t.id}
-          todo={t}
-          handelCheck={handelCompleteClick}
-          handelDelete={handelDeleteClick}
-        />
-      );
-    }
-  });
+
+  const todosToBeRendered = useMemo(() => {
+    if (todosFilter === 1) return todos.filter((t) => t.isCompleted);
+    if (todosFilter === 2) return todos.filter((t) => !t.isCompleted);
+    return todos;
+  }, [todos, todosFilter]);
+
+  const todosJSX = todosToBeRendered.map((t) => (
+    <Todo
+      key={t.id}
+      todo={t}
+      handelCheck={handelCompleteClick}
+      handelDelete={handelDeleteClick}
+      Delete={Delete}
+      Update={Update}
+      setMessage={setSnckBarMessage}
+      setSnackBar={setOpenSnackBar}
+    />
+  ));
   return (
-    <Container
-      maxWidth="lg"
-      sx={{
-        margin: 10,
-      }}
-    >
-      <Card sx={{ borderRadius: 5, padding: 5 }}>
-        <CardContent>
-          <Typography variant="h2" sx={{ fontWeight: "700", padding: 3 }}>
-            مهامي
-          </Typography>
-          <Divider sx={{ width: "80%", margin: "auto" }} />
+    <>
+      <Container
+        maxWidth="lg"
+        sx={{
+          margin: 10,
+        }}
+      >
+        <Card sx={{ borderRadius: 5}}>
+          <CardContent>
+            <Typography variant="h2" sx={{ fontWeight: "700", padding: 3 }}>
+              مهامي
+            </Typography>
+            <Divider sx={{ width: "80%", margin: "auto" }} />
 
-          {/*FILTER BUTTONS*/}
-          <ToggleButtonGroup
-            style={{ direction: "ltr", marginTop: "30px" }}
-            value={todosFilter}
-            exclusive
-            //onChange={handleAlignment}
-            aria-label="text alignment"
-            color="primary"
-          >
-            <ToggleButton
-              onClick={() => {
-                setTodosFilter(0);
-              }}
-              value={0}
-              aria-label="left aligned"
+            {/*FILTER BUTTONS*/}
+            <ToggleButtonGroup
+              style={{ direction: "ltr", marginTop: "30px" }}
+              value={todosFilter}
+              exclusive
+              //onChange={handleAlignment}
+              aria-label="text alignment"
+              color="primary"
             >
-              الكل
-            </ToggleButton>
-            <ToggleButton
-              onClick={() => {
-                setTodosFilter(1);
-              }}
-              value={1}
-              aria-label="centered"
-            >
-              المنجز
-            </ToggleButton>
-            <ToggleButton
-              onClick={() => {
-                setTodosFilter(2);
-              }}
-              value={2}
-              aria-label="right aligned"
-            >
-              غير المنجز
-            </ToggleButton>
-          </ToggleButtonGroup>
-          {/*======FILTER BUTTONS======*/}
-
-          {/*ALL TODOS*/}
-          <HandlerContext.Provider
-            value={{
-              completeContext: handelCompleteClick,
-              deleteContext: handelDeleteClick,
-              updateContext: handelUpdateClick,
-            }}
-          >
-            {todosJSX}
-          </HandlerContext.Provider>
-
-          {/* ====ALL TODOS====*/}
-          <Divider sx={{ marginTop: 5, marginBottom: 5 }} />
-          <Grid style={{}} container spacing={2}>
-            <Grid style={{}} size={8}>
-              <TextField
-                style={{ width: "100%" }}
-                id="outlined-basic"
-                label="تفاصيل المهمة"
-                variant="outlined"
-                onChange={(e) => {
-                  handelInputChange(e.target.value);
-                }}
-                value={todoTitle}
-              />
-            </Grid>
-            <Grid style={{}} size={4}>
-              <Button
-                className="add-btn"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  backgroundColor: "primary",
-                }}
-                variant="contained"
+              <ToggleButton
                 onClick={() => {
-                  handelAddEvent();
+                  setTodosFilter(0);
                 }}
-                disabled={todoTitle === ""}
+                value={0}
+                aria-label="left aligned"
               >
-                إضافة
-              </Button>
+                الكل
+              </ToggleButton>
+              <ToggleButton
+                onClick={() => {
+                  setTodosFilter(1);
+                }}
+                value={1}
+                aria-label="centered"
+              >
+                المنجز
+              </ToggleButton>
+              <ToggleButton
+                onClick={() => {
+                  setTodosFilter(2);
+                }}
+                value={2}
+                aria-label="right aligned"
+              >
+                غير المنجز
+              </ToggleButton>
+            </ToggleButtonGroup>
+            {/*======FILTER BUTTONS======*/}
+
+            {/*ALL TODOS*/}
+            <HandlerContext.Provider
+              value={{
+                completeContext: handelCompleteClick,
+                deleteContext: handelDeleteClick,
+                updateContext: handelUpdateClick,
+              }}
+            >
+              <DeleteModal
+                deleteClicked={deleteModal}
+                setDeleteClicked={setDeleteModal}
+                id={todoId}
+                setMessage={setSnckBarMessage}
+                setSnackBar={setOpenSnackBar}
+              />
+              <UpdateModal
+                updateClicked={updateModal}
+                setUpdateClicked={setUpdateModal}
+                todo={todo}
+                setMessage={setSnckBarMessage}
+                setSnackBar={setOpenSnackBar}
+              />
+
+              {todosJSX}
+            </HandlerContext.Provider>
+
+            {/* ====ALL TODOS====*/}
+            <Divider sx={{ marginTop: 5, marginBottom: 5 }} />
+            <Grid style={{}} container spacing={2}>
+              <Grid style={{}} size={8}>
+                <TextField
+                  style={{ width: "100%" }}
+                  id="outlined-basic"
+                  label="تفاصيل المهمة"
+                  variant="outlined"
+                  onChange={(e) => {
+                    handelInputChange(e.target.value);
+                  }}
+                  value={todoTitle}
+                />
+              </Grid>
+              <Grid style={{}} size={4}>
+                <Button
+                  className="add-btn"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "primary",
+                  }}
+                  variant="contained"
+                  onClick={() => {
+                    handelAddEvent();
+                    setSnckBarMessage("TODO has been added successfuly !");
+                    setOpenSnackBar(true);
+                  }}
+                  disabled={todoTitle === ""}
+                >
+                  إضافة
+                </Button>
+              </Grid>
             </Grid>
-          </Grid>
-          {/*ADD BUTTON + TODO DESCRIBTION*/}
-        </CardContent>
-      </Card>
-    </Container>
+            {/*ADD BUTTON + TODO DESCRIBTION*/}
+          </CardContent>
+        </Card>
+      </Container>
+      <MySnackBar
+        getter={openSnackBar}
+        setter={setOpenSnackBar}
+        message={snckBarMessage}
+      />
+    </>
   );
 }

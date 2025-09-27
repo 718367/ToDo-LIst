@@ -5,17 +5,29 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { HandlerContext } from "../contexts/HandlerContext";
-export default function UpdateModal({ updateClicked, setUpdateClicked, todo }) {
-  const [title, setTitle] = React.useState(todo?.title || "");
-  const [details, setDetails] = React.useState(todo?.details || "");
+
+export default function UpdateModal({
+  updateClicked,
+  setUpdateClicked,
+  todo,
+  setMessage,
+  setSnackBar,
+}) {
+  const [title, setTitle] = React.useState("");
+  const [details, setDetails] = React.useState("");
   const { updateContext } = useContext(HandlerContext);
 
   const handleClose = () => {
     setUpdateClicked(false);
   };
-
+  useEffect(() => {
+    if (updateClicked && todo) {
+      setTitle(todo.title);
+      setDetails(todo.details);
+    }
+  }, [updateClicked, todo]);
   return (
     <>
       <Dialog
@@ -63,6 +75,8 @@ export default function UpdateModal({ updateClicked, setUpdateClicked, todo }) {
             onClick={() => {
               updateContext(todo.id, title, details);
               handleClose();
+              setMessage(" TODO has been Updated successfuly!");
+              setSnackBar(true);
             }}
           >
             تعديل

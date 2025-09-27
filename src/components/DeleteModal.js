@@ -7,7 +7,13 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useContext } from "react";
 import { HandlerContext } from "../contexts/HandlerContext";
-export default function DeleteModal({ deleteClicked, setDeleteClicked, id }) {
+export default function DeleteModal({
+  deleteClicked,
+  setDeleteClicked,
+  id,
+  setMessage,
+  setSnackBar,
+}) {
   const { deleteContext } = useContext(HandlerContext);
   const handleClose = () => {
     setDeleteClicked(false);
@@ -39,6 +45,8 @@ export default function DeleteModal({ deleteClicked, setDeleteClicked, id }) {
             onClick={() => {
               deleteContext(id);
               setDeleteClicked(false);
+              setMessage(" TODO has been deleted successfuly !");
+              setSnackBar(true);
             }}
             autoFocus
           >

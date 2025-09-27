@@ -5,29 +5,15 @@ import Grid from "@mui/material/Grid";
 import CheckIcon from "@mui/icons-material/Check";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
+import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import DeleteModal from "./DeleteModal";
-import UpdateModal from "./UpdateModal";
-import { useState, useContext } from "react";
+import { useContext } from "react";
 import { HandlerContext } from "../contexts/HandlerContext";
 
-export default function Todo({ todo }) {
-  const [deleteModal, setDeleteModal] = useState(false);
-  const [updateModal, setUpdateModal] = useState(false);
-
+export default function Todo({ todo, Delete, Update }) {
   const { completeContext } = useContext(HandlerContext);
   return (
     <>
-      <DeleteModal
-        deleteClicked={deleteModal}
-        setDeleteClicked={setDeleteModal}
-        id={todo.id}
-      />
-      <UpdateModal
-        updateClicked={updateModal}
-        setUpdateClicked={setUpdateModal}
-        todo={todo}
-      />
       <Card
         className="todo-card"
         sx={{
@@ -46,18 +32,22 @@ export default function Todo({ todo }) {
             <Grid size={8} style={{}}>
               <Typography
                 variant="h5"
-                style={{
+                sx={{
                   textAlign: "right",
                   textDecoration: todo.isCompleted ? "line-through" : "none",
+                  fontWeight: "bold",
+                  color: "#FFFFFF", // white for title
                 }}
               >
-                {todo.title}{" "}
+                {todo.title}
               </Typography>
               <Typography
-                variant="h6"
-                style={{
+                variant="body1"
+                sx={{
                   textAlign: "right",
                   textDecoration: todo.isCompleted ? "line-through" : "none",
+                  fontStyle: "italic",
+                  color: "#c2c1c1ff", // a lighter color for details
                 }}
               >
                 {todo.details}
@@ -66,11 +56,13 @@ export default function Todo({ todo }) {
             {/*===== TODO CONTENT =====*/}
             {/*ACTIONS*/}
             <Grid
+              className="buttons"
               size={4}
               display="flex"
               justifyContent="space-around"
               alignItems="center"
             >
+              {/*==============Complete button==========*/}
               <IconButton
                 className="icon-button"
                 style={{
@@ -84,6 +76,9 @@ export default function Todo({ todo }) {
               >
                 <CheckIcon />
               </IconButton>
+              {/*==============Complete button==========*/}
+
+              {/*==============Update button==========*/}
               <IconButton
                 className="icon-button"
                 style={{
@@ -92,11 +87,14 @@ export default function Todo({ todo }) {
                   border: "solid #3785ceff 3px",
                 }}
                 onClick={() => {
-                  setUpdateModal(true);
+                  Update(todo);
                 }}
               >
                 <EditIcon />
               </IconButton>
+              {/*==============Update button==========*/}
+
+              {/*==============Delete button==========*/}
               <IconButton
                 className="icon-button"
                 style={{
@@ -105,11 +103,12 @@ export default function Todo({ todo }) {
                   border: "solid #d32e2eff 3px",
                 }}
                 onClick={() => {
-                  setDeleteModal(true);
+                  Delete(todo.id);
                 }}
               >
                 <DeleteOutlineIcon />
               </IconButton>
+              {/*==============Delete button==========*/}
             </Grid>
             {/*===== ACTIONS =====*/}
           </Grid>
